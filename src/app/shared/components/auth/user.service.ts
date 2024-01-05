@@ -4,6 +4,7 @@ import { UserModel } from './user.model';
 export class UserService {
 
   private roles = ['user', 'admin', 'editor'];
+  private localStorageKey = 'listUser';
   private demoUsers: UserModel[]; // Declare demoUsers as a class property
 
   constructor() {
@@ -19,6 +20,7 @@ export class UserService {
         const user = this.generateRandomUser(i);
         this.demoUsers.push(user);
       }
+      this.demoUsers.reverse();
       localStorage.setItem('listUser', JSON.stringify(this.demoUsers));
     }
 
@@ -52,6 +54,17 @@ export class UserService {
 
   public login(username: string, password: string): UserModel | undefined {
     return this.demoUsers.find(user => user.username === username && user.password === password);
+  }
+
+  createUser(user: UserModel): void {
+    const existingDataString = localStorage.getItem(this.localStorageKey);
+    let existingData: UserModel[] = existingDataString ? JSON.parse(existingDataString) : [];
+
+    // Add new user data
+    const submittedData: UserModel = { ...user };
+    existingData.push(submittedData);
+    // Save updated data back to localStorage
+    localStorage.setItem(this.localStorageKey, JSON.stringify(existingData.reverse()));
   }
 
 }

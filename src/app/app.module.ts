@@ -17,11 +17,12 @@ import { FooterComponent } from './shared/components/footer/footer.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { UserComponent } from './user/user.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from './shared/components/auth/auth.service';
 import { UserService } from './shared/components/auth/user.service';
 import { AuthGuard } from './shared/components/auth/auth.guard';
 import { CreateUserComponent } from './user/create/create.component';
+import { ListUsersComponent } from './user/list/list.component';
 
 @NgModule({
   declarations: [
@@ -38,12 +39,14 @@ import { CreateUserComponent } from './user/create/create.component';
     DashboardComponent,
     UserComponent,
     CreateUserComponent,
+    ListUsersComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFirestoreModule,
+    ReactiveFormsModule,
     FormsModule,
   ],
   providers: [AuthService,UserService,AuthGuard],

@@ -1,39 +1,69 @@
 <div class="container mt-5">
-  <form (ngSubmit)="onSubmit()" #userForm="ngForm" name="userFormCreate">
-    <div class="form-group">
-      <label for="username">Username</label>
-      <input type="text" class="form-control" id="username" placeholder="Enter username" [(ngModel)]="userData.username" name="username" [ngModelOptions]="{standalone: true}" required>
+  <form (ngSubmit)="onSubmit()" #userFormCreate="ngForm" name="userFormCreate">
+
+    <div class="form-group row">
+      <div class="col">
+        <label for="first_name">First Name</label>
+        <input type="text" class="form-control" id="first_name" placeholder="Enter first name" [(ngModel)]="userData.first_name" name="first_name" [ngModelOptions]="{standalone: true}">
+      </div>
+      <div class="col">
+        <label for="last_name">Last Name</label>
+        <input type="text" class="form-control" id="last_name" placeholder="Enter last name" [(ngModel)]="userData.last_name" name="last_name" [ngModelOptions]="{standalone: true}">
+      </div>
     </div>
 
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input type="email" class="form-control" id="email" placeholder="Enter email" [(ngModel)]="userData.email" name="email" [ngModelOptions]="{standalone: true}" required>
+    <div class="form-group row">
+      <div class="col-12">
+        <label for="username">Username</label>
+        <input type="text" class="form-control" id="username" placeholder="Enter username" [(ngModel)]="userData.username" name="username" [ngModelOptions]="{standalone: true}" required minlength="1" maxlength="10">
+        <div *ngIf="userFormCreate.controls['username']?.invalid">
+          <div *ngIf="userFormCreate.controls['username'].hasError('required')">Username is required.</div>
+          <div *ngIf="userFormCreate.controls['username'].hasError('minlength')">Username must be at least 1 character long.</div>
+          <div *ngIf="userFormCreate.controls['username'].hasError('maxlength')">Username cannot be more than 10 characters long.</div>
+        </div>
+      </div>
     </div>
 
-    <div class="form-group">
-      <label for="first_name">First Name</label>
-      <input type="text" class="form-control" id="first_name" placeholder="Enter first name" [(ngModel)]="userData.first_name" name="first_name" [ngModelOptions]="{standalone: true}" required>
+     <div class="form-group row">
+      <div class="col-12">
+        <label for="email">Email</label>
+        <input type="email" class="form-control" id="email" placeholder="Enter email" [(ngModel)]="userData.email" name="email" [ngModelOptions]="{standalone: true}" required email>
+        <div *ngIf="userFormCreate.controls['email']?.invalid && (userFormCreate.controls['email'].dirty || userFormCreate.controls['email'].touched)">
+          <div *ngIf="userFormCreate.controls['email'].hasError('required')">Email is required.</div>
+          <div *ngIf="userFormCreate.controls['email'].hasError('email')">Invalid email address.</div>
+        </div>
+      </div>
     </div>
 
-    <div class="form-group">
-      <label for="last_name">Last Name</label>
-      <input type="text" class="form-control" id="last_name" placeholder="Enter last name" [(ngModel)]="userData.last_name" name="last_name" [ngModelOptions]="{standalone: true}" required>
+    <div class="form-group row">
+      <div class="col-12">
+        <label for="password">Password</label>
+        <input type="password" class="form-control" id="password" placeholder="Enter password" [(ngModel)]="userData.password" name="password" [ngModelOptions]="{standalone: true}" required pattern="^(?=.*[A-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{1,}$">
+        <div *ngIf="userFormCreate.controls['password']?.invalid">
+          <div *ngIf="userFormCreate.controls['password'].hasError('required')">Password is required.</div>
+          <div *ngIf="userFormCreate.controls['password'].hasError('pattern')">Password must contain at least one uppercase letter and one special character (!@#$%^&*).</div>
+        </div>
+      </div>
     </div>
 
-    <div class="form-group">
-      <label for="password">Password</label>
-      <input type="password" class="form-control" id="password" placeholder="Enter password" [(ngModel)]="userData.password" name="password" [ngModelOptions]="{standalone: true}" required>
+    <div class="form-group row">
+      <div class="col-12">
+        <label for="role">Role</label>
+        <select class="form-control" id="role" [(ngModel)]="userData.role" name="role" [ngModelOptions]="{standalone: true}" required>
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+          <option value="editor">Editor</option>
+        </select>
+        <div *ngIf="userFormCreate.controls['role']?.invalid">
+          <div *ngIf="userFormCreate.controls['role'].hasError('required')">Role is required.</div>
+        </div>
+      </div>
     </div>
 
-    <div class="form-group">
-      <label for="role">Role</label>
-      <select class="form-control" id="role" [(ngModel)]="userData.role" name="role" [ngModelOptions]="{standalone: true}" required>
-        <option value="admin">Admin</option>
-        <option value="editor">Editor</option>
-        <option value="user">User</option>
-      </select>
+    <div class="form-group row">
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary" [disabled]="userFormCreate?.invalid">Submit</button>
+      </div>
     </div>
-
-    <button type="submit" class="btn btn-primary">Submit</button>
   </form>
 </div>

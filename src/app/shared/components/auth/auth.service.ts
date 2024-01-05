@@ -1,4 +1,3 @@
-// auth.service.ts
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from './user.service';
@@ -8,6 +7,7 @@ import { UserService } from './user.service';
 })
 export class AuthService {
   private currentUser: any;
+  private tokenName = 'UserToken';
 
   constructor(private router: Router, private userService: UserService) {}
 
@@ -30,23 +30,41 @@ export class AuthService {
   public login(username: string, password: string): boolean {
     const currentUser = this.userService.login(username, password);
     if (currentUser) {
+      this.saveToken(JSON.stringify(currentUser)); // currentUser has a 'token' property
       this.setCurrentUser(currentUser);
-      if (this.isAdmin()) {
-        this.redirectToAdmin();
-      } else {
-        this.redirectToHome();
-      }
-
+      this. redirectLogin();
       return true; // Return true on successful login
     } else {
-      console.log('Login failed');
+      console.error('Login failed');
       // Handle login failure (e.g., show an error message or redirect to an error page)
       return false; // Return false on login failure
     }
   }
 
+  public redirectLogin():void {
+    if (this.isAdmin()) {
+      this.redirectToAdmin();
+    } else {
+      this.redirectToHome();
+    }
+  }
+
+  public getToken(): any {
+    const token = localStorage.getItem(this.tokenName);
+    if (token) {
+      return token;
+    } else {
+      return false;
+    }
+  }
+
+  private saveToken(token: string): void {
+    // Save the token to local storage or a cookie
+    localStorage.setItem(this.tokenName, token);
+  }
+
   private redirectToAdmin(): void {
-    this.router.navigate(['/admin']); // Replace '/admin' with the actual route for the admin section
+    this.router.navigate(['/admin/user']); // Replace '/admin' with the actual route for the admin section
   }
 
   private redirectToHome(): void {
