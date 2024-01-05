@@ -1,4 +1,5 @@
 import { UserModel } from './user.model';
+import { Observable, of } from 'rxjs';
 
 
 export class UserService {
@@ -56,15 +57,27 @@ export class UserService {
     return this.demoUsers.find(user => user.username === username && user.password === password);
   }
 
-  createUser(user: UserModel): void {
+  public createUser(user: UserModel): Observable<{ success: boolean, reason?: string }> {
     const existingDataString = localStorage.getItem(this.localStorageKey);
     let existingData: UserModel[] = existingDataString ? JSON.parse(existingDataString) : [];
+
+    // Check if the user already exists
+    const userExists = existingData.some(existingUser => existingUser.username === user.username);
+
+    if (userExists) {
+      // Return an observable indicating that the user already exists
+      return of({ success: false, reason: 'User already exists' });
+    }
 
     // Add new user data
     const submittedData: UserModel = { ...user };
     existingData.push(submittedData);
+
     // Save updated data back to localStorage
     localStorage.setItem(this.localStorageKey, JSON.stringify(existingData.reverse()));
+
+    // Return an observable indicating successful user creation
+    return of({ success: true });
   }
 
 }

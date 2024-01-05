@@ -21,7 +21,7 @@
         <a routerLink="/register" class="btn btn-warning btn-link">Sign-up</a>
       </div>
 
-      <div class="dropdown account show">
+      <div *ngIf="isLogin" class="dropdown account show">
         <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
          My Account
         </a>

@@ -11,14 +11,15 @@ export class ListUsersComponent {
   public itemsPerPage = 10;
   public pages: number[] = []; // Add this line
   public currentPage = 1;
+  private keyUser = 'listUser';
 
   // Use ngOnInit to initialize data
   ngOnInit(): void {
-    const localStorageUsers = localStorage.getItem('listUser');
+    const localStorageUsers = localStorage.getItem(this.keyUser);
     // Parse users if exists, otherwise use an empty array
     this.users = localStorageUsers ? JSON.parse(localStorageUsers) : [];
     // Reverse array of users
-    this.users = this.users.reverse();
+    this.users = this.users;
     this.initializePagination();
     this.users = this.getUsersForPage(this.currentPage);
   }
@@ -37,7 +38,7 @@ export class ListUsersComponent {
   }
 
   public changePage(pageNumber: number): void {
-    const localStorageUsers = localStorage.getItem('listUser');
+    const localStorageUsers = localStorage.getItem(this.keyUser);
     // Parse users if exists, otherwise use an empty array
     this.users = localStorageUsers ? JSON.parse(localStorageUsers) : [];
     this.currentPage = pageNumber;
