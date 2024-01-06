@@ -18,4 +18,8 @@ export class HeaderComponent {
       this.authService.redirectLogin();
     }
   }
+
+  logout(): void {
+    this.authService.logout();
+  }
 }

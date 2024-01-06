@@ -70,4 +70,8 @@ export class AuthService {
   private redirectToHome(): void {
     this.router.navigate(['']); // Redirect to the home page
   }
+
+  public logout(): void {
+    localStorage.removeItem(this.tokenName);
+  }
 }
