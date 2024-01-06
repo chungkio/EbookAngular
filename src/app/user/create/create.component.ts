@@ -61,6 +61,7 @@ export class CreateUserComponent implements OnInit {
         if (response.success) {
           // User creation successful
           alert('User creation successful!');
+          this.userFormCreate.reset();
           this.isCreated = true;// You might use this flag for other purposes in your component
         } else {
           // User creation failed, handle the reason

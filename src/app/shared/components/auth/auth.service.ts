@@ -32,7 +32,7 @@ export class AuthService {
     if (currentUser) {
       this.saveToken(JSON.stringify(currentUser)); // currentUser has a 'token' property
       this.setCurrentUser(currentUser);
-      this.redirectLogin();
+      this. redirectLogin();
       return true; // Return true on successful login
     } else {
       console.error('Login failed');
@@ -71,8 +71,7 @@ export class AuthService {
     this.router.navigate(['']); // Redirect to the home page
   }
 
-  public logout(): void {
+  logout(): void {
     localStorage.removeItem(this.tokenName);
-    this.router.navigate(['']);
   }
 }

@@ -53,11 +53,11 @@ export class UserService {
     };
   }
 
-  public login(username: string, password: string): UserModel | undefined {
+  login(username: string, password: string): UserModel | undefined {
     return this.demoUsers.find(user => user.username === username && user.password === password);
   }
 
-  public createUser(user: UserModel): Observable<{ success: boolean, reason?: string }> {
+  createUser(user: UserModel): Observable<{ success: boolean, reason?: string }> {
     const existingDataString = localStorage.getItem(this.localStorageKey);
     let existingData: UserModel[] = existingDataString ? JSON.parse(existingDataString) : [];
 
