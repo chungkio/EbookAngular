@@ -1,0 +1,68 @@
+<div class="container mt-5">
+    <form [formGroup]="userFormEdit" (ngSubmit)="onSubmitEditUser()">
+      <div class="form-group row">
+        <div class="col">
+          <label for="first_name">First Name</label>
+          <input type="text" class="form-control" id="first_name" placeholder="Enter first name" formControlName="first_name">
+        </div>
+        <div class="col">
+          <label for="last_name">Last Name</label>
+          <input type="text" class="form-control" id="last_name" placeholder="Enter last name" formControlName="last_name">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" class="form-control" id="username" placeholder="Enter username" formControlName="username">
+        <div *ngIf="(getFormControl('username').touched || isError) && getFormControl('username').hasError('required')">
+          Username is required.
+        </div>
+        <div *ngIf="getFormControl('username').hasError('minlength')">
+          Username must be at least 4 characters long.
+        </div>
+        <div *ngIf="getFormControl('username').hasError('maxlength')">
+          Username cannot be more than 10 characters long.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" class="form-control" id="email" placeholder="Enter email" formControlName="email">
+        <div *ngIf="(getFormControl('email').touched || isError) && getFormControl('email').hasError('required')">
+          Email is required.
+        </div>
+        <div *ngIf="(getFormControl('email').touched || isError) && getFormControl('email').hasError('email')">
+          Invalid email address.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" class="form-control" id="password" placeholder="Enter password" formControlName="password">
+        <div *ngIf="getFormControl('password').hasError('required') && (getFormControl('password').touched || isError)">
+          Password is required.
+        </div>
+        <div *ngIf="getFormControl('password').hasError('pattern') && (getFormControl('password').touched || isError)">
+          Password must contain at least one uppercase letter and one special character (!@#$%^&*).
+        </div>
+      </div>
+
+      <div class="form-group" *ngIf="RolePipe | role">
+        <label for="role">Role</label>
+        <select class="form-control" id="role" formControlName="role">
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+          <option value="editor">Editor</option>
+        </select>
+        <div *ngIf="(getFormControl('role').touched || isError) && getFormControl('role').hasError('required')">
+          Role is required.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+
+      <a *ngIf="isCreated" routerLink="/admin/user" class="btn btn-success btn-outline-light btn-link">Back to List User</a>
+    </form>
+</div>

@@ -1,47 +1,58 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from './user.service';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private currentUser: any;
+  private currentUserSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  public currentUser$: Observable<any> = this.currentUserSubject.asObservable();
+
   private tokenName = 'UserToken';
 
-  constructor(private router: Router, private userService: UserService) {}
-
-  // Method to set the current user (this may be called during login)
-  public setCurrentUser(user: any): void {
-    this.currentUser = user;
+  constructor(
+    private router: Router, private userService: UserService,
+    ) {
+    const storedUser = localStorage.getItem(this.tokenName);
+    if (storedUser) {
+      this.currentUserSubject.next(JSON.parse(storedUser));
+    }
   }
 
-  // Method to get the current user
+  public setCurrentUser(user: any): void {
+    this.currentUserSubject.next(user);
+    this.saveToken(JSON.stringify(user));
+  }
+
   public getCurrentUser(): any {
-    return this.currentUser;
+    return this.currentUserSubject.value;
   }
 
   public isAdmin(): boolean {
     const user = this.getCurrentUser();
-    // Check if the user's role is 'admin'
-    return user && user.role === 'admin';
+    if (user && (user.role === 'admin' || user.role === 'editor')) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   public login(username: string, password: string): boolean {
     const currentUser = this.userService.login(username, password);
     if (currentUser) {
-      this.saveToken(JSON.stringify(currentUser)); // currentUser has a 'token' property
       this.setCurrentUser(currentUser);
-      this. redirectLogin();
-      return true; // Return true on successful login
+      this.userIsLoggedIn(); // Removed redundant call to this method
+      this.redirectLogin();
+      return true;
     } else {
-      console.error('Login failed');
-      // Handle login failure (e.g., show an error message or redirect to an error page)
-      return false; // Return false on login failure
+      return false;
     }
   }
 
-  public redirectLogin():void {
+  public redirectLogin(): void {
     if (this.isAdmin()) {
       this.redirectToAdmin();
     } else {
@@ -50,28 +61,50 @@ export class AuthService {
   }
 
   public getToken(): any {
-    const token = localStorage.getItem(this.tokenName);
-    if (token) {
-      return token;
-    } else {
-      return false;
-    }
+    return localStorage.getItem(this.tokenName) || false;
   }
 
   private saveToken(token: string): void {
-    // Save the token to local storage or a cookie
     localStorage.setItem(this.tokenName, token);
   }
 
   private redirectToAdmin(): void {
-    this.router.navigate(['/admin/user']); // Replace '/admin' with the actual route for the admin section
+    this.router.navigate(['/admin/user']);
   }
 
   private redirectToHome(): void {
-    this.router.navigate(['']); // Redirect to the home page
+    this.router.navigate(['']);
   }
 
-  logout(): void {
-    localStorage.removeItem(this.tokenName);
+  public redirectToLogin(): void {
+    this.router.navigate(['/login']);
   }
+
+  public logout(): void {
+    localStorage.removeItem(this.tokenName);
+    this.currentUserSubject.next(null);
+    this.router.navigate(['/login']);
+  }
+
+  public userIsLoggedIn(): Observable<boolean> {
+    return this.currentUserSubject.pipe(map(user => !!user));
+  }
+
+  removeUser(username: string): void {
+    // Call the removeUser method from the UserService
+    this.userService.removeUser(username).subscribe(result => {
+      if (result.success) {
+        // User removal was successful, update the user list
+        alert('User removed successfully');
+      } else {
+        // Handle the error or reason for failure
+        console.error(result.reason);
+      }
+    });
+  }
+
+  editUser(username: any): void {
+    this.router.navigate(['admin/user/edit', username]);
+  }
+
 }

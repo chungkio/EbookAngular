@@ -1,5 +1,6 @@
+import { AuthService } from '../../shared/components/auth/auth.service';
 import { Component } from '@angular/core';
-import { UserModel } from 'src/app/auth/auth.model';
+import { UserModel } from '../../shared/components/auth/user.model';
 
 @Component({
   selector: '.users',
@@ -13,6 +14,7 @@ export class ListUsersComponent {
   public currentPage = 1;
   private keyUser = 'listUser';
 
+  constructor(private AuthService: AuthService) {}
   // Use ngOnInit to initialize data
   ngOnInit(): void {
     const localStorageUsers = localStorage.getItem(this.keyUser);
@@ -44,4 +46,13 @@ export class ListUsersComponent {
     this.currentPage = pageNumber;
     this.users = this.getUsersForPage(this.currentPage);
   }
+
+  removeUser(username: string): void {
+    this.AuthService.removeUser(username);
+  }
+
+  editUser(username: any):void {
+    this.AuthService.editUser(username);
+  }
+
 }

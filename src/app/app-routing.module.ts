@@ -4,9 +4,6 @@ import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthGuard } from './shared/components/auth/auth.guard';
-import { CreateUserComponent } from './user/create/create.component';
-import { ListUsersComponent } from './user/list/list.component';
-import { UserComponent } from './user/user.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -17,14 +14,11 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       {
-        path: 'user', component: UserComponent,
-        children: [
-          { path: '', component: ListUsersComponent },
-          { path: 'create', component: CreateUserComponent }
-        ]
+        path: 'user',
+        loadChildren: () => import('./user/user.module').then((m) => m.UserModule)
       }
     ]
-  },
+  }
 ];
 
 @NgModule({

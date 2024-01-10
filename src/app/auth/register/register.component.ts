@@ -1,18 +1,19 @@
+import { AuthService } from '../../shared/components/auth/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
-import { UserModel } from '../../auth/auth.model';
+import { UserModel } from '../../shared/components/auth/user.model';
 import { Router } from '@angular/router';
 import { UserService } from '../../shared/components/auth/user.service';
+
 @Component({
-  selector: 'app-register',
+  selector: 'create-user',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
-
 export class RegisterComponent implements OnInit {
   public isCreated = false;
   public isErorr = false;
-  userFormCreate!: FormGroup;
+  userFormRegister!: FormGroup;
 
   userData: UserModel = {
     username: '',
@@ -23,42 +24,54 @@ export class RegisterComponent implements OnInit {
     role: 'user'
   };
 
-  constructor(private userService: UserService, private router: Router, private formBuilder: FormBuilder) {}
+  constructor(private AuthService: AuthService,  private userService: UserService, private router: Router, private formBuilder: FormBuilder) {}
 
   ngOnInit() {
     this.initializeForm();
   }
 
   private initializeForm() {
-    this.userFormCreate = this.formBuilder.group({
+    this.userFormRegister = this.formBuilder.group({
       username: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(10)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.pattern(/^(?=.*[A-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{1,}$/)]],
-      role: ['', Validators.required],
-    });
+      password2: ['', [Validators.required, Validators.pattern(/^(?=.*[A-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{1,}$/)]],
+    },
+    { validator: this.passwordsMatchValidator });
   }
 
-  get userFormCreateControl() {
-    return this.userFormCreate.controls;
+  private passwordsMatchValidator(group: FormGroup) {
+    const password = group.get('password')?.value;
+    const password2 = group.get('password2')?.value;
+
+    return password === password2 ? null : { passwordsNotMatch: true };
+  }
+
+  get userFormRegisterControl() {
+    return this.userFormRegister.controls;
   }
 
   // Helper function to access form controls dynamically
   getFormControl(controlName: string): AbstractControl {
-    return this.userFormCreate.get(controlName) as AbstractControl;
+    return this.userFormRegister.get(controlName) as AbstractControl;
   }
 
-  onSubmitCreateUser() {
-    if (this.userFormCreate.invalid) {
+  onSubmitRegisterUser() {
+    this.userFormRegister.valueChanges.subscribe(value => {
+      console.log('Form Value Changes:', value);
+    });
+    if (this.userFormRegister.invalid) {
       this.isErorr = true;
       return;
     }
 
-    this.userService.createUser(this.userFormCreate.value).subscribe(
+    this.userService.createUser(this.userFormRegister.value).subscribe(
       (response) => {
         if (response.success) {
           // User creation successful
           alert('User creation successful!');
-          this.isCreated = true;// You might use this flag for other purposes in your component
+          this.userFormRegister.reset();
+          this.AuthService.redirectToLogin();
         } else {
           // User creation failed, handle the reason
           console.error('Error creating user:', response.reason);
@@ -75,6 +88,4 @@ export class RegisterComponent implements OnInit {
       }
     );
   }
-
-
 }

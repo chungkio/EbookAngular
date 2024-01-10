@@ -1,7 +1,6 @@
-// Update the import statement for AbstractControl
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
-import { UserModel } from '../../auth/auth.model';
+import { UserModel } from '../../shared/components/auth/user.model';
 import { Router } from '@angular/router';
 import { UserService } from '../../shared/components/auth/user.service';
 
@@ -62,7 +61,7 @@ export class CreateUserComponent implements OnInit {
           // User creation successful
           alert('User creation successful!');
           this.userFormCreate.reset();
-          this.isCreated = true;// You might use this flag for other purposes in your component
+          this.isCreated = true; // You might use this flag for other purposes in your component
         } else {
           // User creation failed, handle the reason
           console.error('Error creating user:', response.reason);
@@ -79,6 +78,4 @@ export class CreateUserComponent implements OnInit {
       }
     );
   }
-
-
 }

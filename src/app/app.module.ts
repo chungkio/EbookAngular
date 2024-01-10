@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
-import { environment } from './environments/environment'
+import { environment } from './environments/environment';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -16,13 +16,11 @@ import { LoginComponent } from './auth/login/login.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { UserComponent } from './user/user.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from './shared/components/auth/auth.service';
 import { UserService } from './shared/components/auth/user.service';
 import { AuthGuard } from './shared/components/auth/auth.guard';
-import { CreateUserComponent } from './user/create/create.component';
-import { ListUsersComponent } from './user/list/list.component';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -37,9 +35,6 @@ import { ListUsersComponent } from './user/list/list.component';
     LoginComponent,
     RegisterComponent,
     DashboardComponent,
-    UserComponent,
-    CreateUserComponent,
-    ListUsersComponent,
   ],
   imports: [
     BrowserModule,
@@ -48,8 +43,9 @@ import { ListUsersComponent } from './user/list/list.component';
     AngularFirestoreModule,
     ReactiveFormsModule,
     FormsModule,
+    SharedModule
   ],
-  providers: [AuthService,UserService,AuthGuard],
+  providers: [AuthService, UserService, AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
