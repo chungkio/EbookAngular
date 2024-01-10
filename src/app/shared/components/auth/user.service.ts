@@ -60,15 +60,6 @@ export class UserService {
     return this.demoUsers.find(user => user.username === username && user.password === password);
   }
 
-  setUsers(users: UserModel[]): void {
-    this.demoUsers = users;
-  }
-
-  getUsers(): Observable<UserModel[]> {
-    // Simulate an asynchronous operation, such as fetching data from a server
-    return of(this.demoUsers);
-  }
-
   createUser(user: UserModel): Observable<{ success: boolean, reason?: string }> {
     const existingDataString = localStorage.getItem(this.localStorageKey);
     let existingData: UserModel[] = existingDataString ? JSON.parse(existingDataString) : [];

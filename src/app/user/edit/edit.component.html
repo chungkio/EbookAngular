@@ -46,8 +46,7 @@
           Password must contain at least one uppercase letter and one special character (!@#$%^&*).
         </div>
       </div>
-
-      <div class="form-group" *ngIf="RolePipe | role">
+      <div class="form-group" *ngIf="nameRoleEdit">
         <label for="role">Role</label>
         <select class="form-control" id="role" formControlName="role">
           <option value="user">User</option>
@@ -58,6 +57,7 @@
           Role is required.
         </div>
       </div>
+
 
       <div class="form-group">
         <button type="submit" class="btn btn-primary">Submit</button>

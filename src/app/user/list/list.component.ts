@@ -13,6 +13,7 @@ export class ListUsersComponent {
   public pages: number[] = []; // Add this line
   public currentPage = 1;
   private keyUser = 'listUser';
+  public selectedRole: string = 'all';
 
   constructor(private AuthService: AuthService) {}
   // Use ngOnInit to initialize data
@@ -26,6 +27,17 @@ export class ListUsersComponent {
     this.users = this.getUsersForPage(this.currentPage);
   }
 
+  public onRoleChange(): void {
+    this.users = this.getFilteredUsers();
+    this.currentPage = 1;
+    this.initializePagination();
+    this.users = this.getUsersForPage(this.currentPage);
+  }
+  
+  private getFilteredUsers(): UserModel[] {
+    return this.users.filter(user => this.selectedRole === 'all' || user.role === this.selectedRole);
+  }
+
 
   private initializePagination(): void {
     const totalPages = Math.ceil(this.users.length / this.itemsPerPage);
@@ -34,10 +46,12 @@ export class ListUsersComponent {
 
   // Method to get users for the current page
   public getUsersForPage(pageNumber: number): UserModel[] {
+    const filteredUsers = this.getFilteredUsers(); // Get filtered users based on selected role
     const startIndex = (pageNumber - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
-    return this.users.slice(startIndex, endIndex);
+    return filteredUsers.slice(startIndex, endIndex);
   }
+
 
   public changePage(pageNumber: number): void {
     const localStorageUsers = localStorage.getItem(this.keyUser);

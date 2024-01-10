@@ -1,3 +1,4 @@
+import { AuthService } from './../../shared/components/auth/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { UserModel } from '../../shared/components/auth/user.model';
@@ -13,6 +14,7 @@ import { UserService } from '../../shared/components/auth/user.service';
 export class EditUserComponent implements OnInit {
   public isCreated = false;
   public isError = false;
+  public nameRoleEdit = false;
 
   userFormEdit!: FormGroup;
 
@@ -26,13 +28,16 @@ export class EditUserComponent implements OnInit {
   };
 
   constructor(
+    private AuthService: AuthService,
     private userService: UserService,
     private routeActive: ActivatedRoute,
     private formBuilder: FormBuilder,
     private route: Router
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
+    this.nameRoleEdit = this.isNameCurrentUserRole();
     // Fetch the user data to be edited based on the route parameter
     const username = this.routeActive.snapshot.paramMap.get('username');
 
@@ -54,6 +59,11 @@ export class EditUserComponent implements OnInit {
       console.error('Username is null.');
       // Optionally, you can navigate the user to another page or display an error message.
     }
+  }
+
+  isNameCurrentUserRole(): boolean {
+    const currentUser = this.AuthService.getCurrentUser();
+    return currentUser && currentUser.role == 'admin';
   }
 
   private initializeForm() {
@@ -100,4 +110,5 @@ export class EditUserComponent implements OnInit {
       }
     });
   }
+
 }

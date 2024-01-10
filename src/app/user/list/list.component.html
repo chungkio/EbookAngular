@@ -8,6 +8,12 @@
             <div class="col-md-12 text-center">
               <a routerLink="create" class="btn btn-success btn-link text-white">{{ 'Add New User' }}</a>
             </div>
+            <select [(ngModel)]="selectedRole">
+                <option value="all">All</option>
+                <option value="admin">Admin</option>
+                <option value="editor">Editor</option>
+                <option value="user">User</option>
+            </select>
           </div>
         </div>
         <div class="card-body">
@@ -23,7 +29,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let user of users">
+                  <tr *ngFor="let user of users | userFilter:selectedRole">
                     <td>{{ user.username }}</td>
                     <td>{{ user.email }}</td>
                     <td>{{ user.role }}</td>

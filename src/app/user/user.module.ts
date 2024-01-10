@@ -7,7 +7,8 @@ import { UserComponent } from './user.component';
 import { RouterModule, Routes } from '@angular/router';
 import { EditUserComponent } from './edit/edit.component';
 import { ProfileUserComponent } from './profile/profile.component';
-import { RolePipe } from './role.pipe';
+import { UserFilterPipe  } from './pipes/user-filter.pipe';
+import { FormsModule } from '@angular/forms';
 
 const routes: Routes = [
     {
@@ -28,12 +29,13 @@ const routes: Routes = [
       UserComponent,
       EditUserComponent,
       ProfileUserComponent,
-      RolePipe
+      UserFilterPipe
     ],
     imports: [
       CommonModule,
       ReactiveFormsModule,
-      RouterModule.forChild(routes)
+      RouterModule.forChild(routes),
+      FormsModule
     ]
   })
   export class UserModule { }
