@@ -8,12 +8,12 @@ import { UserModel } from '../../shared/components/auth/user.model';
   styleUrls: ['./list.component.scss']
 })
 export class ListUsersComponent {
-  public users: UserModel[] = [];
-  public itemsPerPage = 10;
-  public pages: number[] = []; // Add this line
-  public currentPage = 1;
+  users: UserModel[] = [];
+  itemsPerPage = 10;
+  pages: number[] = []; // Add this line
+  currentPage = 1;
   private keyUser = 'listUser';
-  public selectedRole: string = 'all';
+  selectedRole: string = 'all';
 
   constructor(private AuthService: AuthService) {}
   // Use ngOnInit to initialize data
@@ -21,31 +21,39 @@ export class ListUsersComponent {
     const localStorageUsers = localStorage.getItem(this.keyUser);
     // Parse users if exists, otherwise use an empty array
     this.users = localStorageUsers ? JSON.parse(localStorageUsers) : [];
-    // Reverse array of users
-    this.users = this.users;
     this.initializePagination();
     this.users = this.getUsersForPage(this.currentPage);
   }
 
   public onRoleChange(): void {
-    this.users = this.getFilteredUsers();
     this.currentPage = 1;
-    this.initializePagination();
+    this.updateFilteredUsers();
+  }
+
+  private updateFilteredUsers(): void {
+    this.users = this.getFilteredUsers();
+    this.updatePagination(); // Update pagination after filtering
     this.users = this.getUsersForPage(this.currentPage);
   }
-  
-  private getFilteredUsers(): UserModel[] {
-    return this.users.filter(user => this.selectedRole === 'all' || user.role === this.selectedRole);
+
+  private updatePagination(): void {
+    const totalPages = Math.ceil(this.users.length / this.itemsPerPage);
+    this.pages = Array.from({ length: totalPages }, (key, i) => i + 1);
   }
 
+  private getFilteredUsers(): UserModel[] {
+    const filteredUsers = this.users.filter(user => this.selectedRole === 'all' || user.role === this.selectedRole);
+    this.updatePagination(); // Update pagination after filtering
+    return filteredUsers;
+  }
 
   private initializePagination(): void {
-    const totalPages = Math.ceil(this.users.length / this.itemsPerPage);
+    const totalPages = Math.ceil(this.getFilteredUsers().length / this.itemsPerPage);
     this.pages = Array.from({ length: totalPages }, (key,i) => i + 1);
   }
 
   // Method to get users for the current page
-  public getUsersForPage(pageNumber: number): UserModel[] {
+  getUsersForPage(pageNumber: number): UserModel[] {
     const filteredUsers = this.getFilteredUsers(); // Get filtered users based on selected role
     const startIndex = (pageNumber - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
@@ -53,7 +61,7 @@ export class ListUsersComponent {
   }
 
 
-  public changePage(pageNumber: number): void {
+  changePage(pageNumber: number): void {
     const localStorageUsers = localStorage.getItem(this.keyUser);
     // Parse users if exists, otherwise use an empty array
     this.users = localStorageUsers ? JSON.parse(localStorageUsers) : [];
