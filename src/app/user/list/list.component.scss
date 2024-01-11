@@ -1,0 +1,13 @@
+$color_1: #fff;
+$background-color_1: #007bff;
+$border-color_1: #007bff;
+
+.pagination {
+	.page-item.active {
+		.page-link {
+			background-color: $background-color_1;
+			border-color: $border-color_1;
+			color: $color_1;
+		}
+	}
+}

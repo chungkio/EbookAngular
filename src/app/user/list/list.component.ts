@@ -69,4 +69,8 @@ export class ListUsersComponent {
   generateNumberArray(size: number): number[] {
     return Array.from({ length: size }, (_, index) => index + 1);
   }
+
+  isActivePage(page: number): boolean {
+    return this.currentPage === page;
+  }
 }
