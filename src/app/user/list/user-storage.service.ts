@@ -9,7 +9,6 @@ export class UserStorageService {
 
   getUsers(): UserModel[] {
     const storedUsers = localStorage.getItem(this.keyUser);
-    console.log('storedUsers: ', storedUsers);
     return storedUsers ? JSON.parse(storedUsers) : [];
   }
 
