@@ -8,11 +8,11 @@
             <div class="col-md-12 text-center">
               <a routerLink="create" class="btn btn-success btn-link text-white">{{ 'Add New User' }}</a>
             </div>
-            <select [(ngModel)]="selectedRole">
-                <option value="all">All</option>
-                <option value="admin">Admin</option>
-                <option value="editor">Editor</option>
-                <option value="user">User</option>
+            <select [(ngModel)]="selectedRole" (change)="onRoleChange()">
+              <option value="all">All</option>
+              <option value="admin">Admin</option>
+              <option value="editor">Editor</option>
+              <option value="user">User</option>
             </select>
           </div>
         </div>
@@ -29,7 +29,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let user of users | userFilter:selectedRole">
+                  <tr *ngFor="let user of getPaginatedUsers()">
                     <td>{{ user.username }}</td>
                     <td>{{ user.email }}</td>
                     <td>{{ user.role }}</td>
@@ -44,13 +44,12 @@
           </div>
           <div class="row">
             <div class="col-md-12">
-              <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-center">
-                  <li class="page-item" *ngFor="let page of pages" [class.active]="page === currentPage">
-                    <a class="page-link" (click)="changePage(page)">{{ page }}</a>
-                  </li>
-                </ul>
-              </nav>
+              <!-- Manual pagination controls (only shown when there's more than one page) -->
+              <ul *ngIf="totalPages() > 1" class="pagination">
+                <li class="page-item" *ngFor="let page of generateNumberArray(totalPages())">
+                  <a class="page-link" [class.active]="currentPage === page" (click)="setPage(page)">{{ page }}</a>
+                </li>
+              </ul>
             </div>
           </div>
         </div>

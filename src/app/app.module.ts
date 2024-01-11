@@ -43,7 +43,7 @@ import { SharedModule } from './shared/shared.module';
     AngularFirestoreModule,
     ReactiveFormsModule,
     FormsModule,
-    SharedModule
+    SharedModule,
   ],
   providers: [AuthService, UserService, AuthGuard],
   bootstrap: [AppComponent]

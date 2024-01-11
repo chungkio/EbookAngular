@@ -1,6 +1,8 @@
-import { AuthService } from '../../shared/components/auth/auth.service';
 import { Component } from '@angular/core';
 import { UserModel } from '../../shared/components/auth/user.model';
+import { AuthService } from '../../shared/components/auth/auth.service';
+import { UserStorageService } from './user-storage.service';
+import { UserFilterPipe } from './../pipes/user-filter.pipe';
 
 @Component({
   selector: '.users',
@@ -8,73 +10,63 @@ import { UserModel } from '../../shared/components/auth/user.model';
   styleUrls: ['./list.component.scss']
 })
 export class ListUsersComponent {
-  users: UserModel[] = [];
-  itemsPerPage = 10;
-  pages: number[] = []; // Add this line
-  currentPage = 1;
-  private keyUser = 'listUser';
   selectedRole: string = 'all';
+  allUsers: UserModel[] = [];
+  filteredUsers: UserModel[] = [];
+  usersPerPage: number = 10;
+  currentPage: number = 1;
 
-  constructor(private AuthService: AuthService) {}
-  // Use ngOnInit to initialize data
-  ngOnInit(): void {
-    const localStorageUsers = localStorage.getItem(this.keyUser);
-    // Parse users if exists, otherwise use an empty array
-    this.users = localStorageUsers ? JSON.parse(localStorageUsers) : [];
-    this.initializePagination();
-    this.users = this.getUsersForPage(this.currentPage);
+  constructor(
+    private userStorageService: UserStorageService,
+    private userFilterPipe: UserFilterPipe,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit() {
+    this.loadUsers();
   }
 
-  public onRoleChange(): void {
-    this.currentPage = 1;
-    this.updateFilteredUsers();
+  loadUsers() {
+    this.allUsers = this.userStorageService.getUsers();
+    this.filterUsers();
   }
 
-  private updateFilteredUsers(): void {
-    this.users = this.getFilteredUsers();
-    this.updatePagination(); // Update pagination after filtering
-    this.users = this.getUsersForPage(this.currentPage);
+  onRoleChange() {
+    this.filterUsers();
   }
 
-  private updatePagination(): void {
-    const totalPages = Math.ceil(this.users.length / this.itemsPerPage);
-    this.pages = Array.from({ length: totalPages }, (key, i) => i + 1);
+  filterUsers() {
+    this.filteredUsers = this.userFilterPipe.transform(this.allUsers, this.selectedRole);
+    this.currentPage = 1; // Reset to the first page when filters change
   }
 
-  private getFilteredUsers(): UserModel[] {
-    const filteredUsers = this.users.filter(user => this.selectedRole === 'all' || user.role === this.selectedRole);
-    this.updatePagination(); // Update pagination after filtering
-    return filteredUsers;
-  }
-
-  private initializePagination(): void {
-    const totalPages = Math.ceil(this.getFilteredUsers().length / this.itemsPerPage);
-    this.pages = Array.from({ length: totalPages }, (key,i) => i + 1);
-  }
-
-  // Method to get users for the current page
-  getUsersForPage(pageNumber: number): UserModel[] {
-    const filteredUsers = this.getFilteredUsers(); // Get filtered users based on selected role
-    const startIndex = (pageNumber - 1) * this.itemsPerPage;
-    const endIndex = startIndex + this.itemsPerPage;
-    return filteredUsers.slice(startIndex, endIndex);
-  }
-
-
-  changePage(pageNumber: number): void {
-    const localStorageUsers = localStorage.getItem(this.keyUser);
-    // Parse users if exists, otherwise use an empty array
-    this.users = localStorageUsers ? JSON.parse(localStorageUsers) : [];
-    this.currentPage = pageNumber;
-    this.users = this.getUsersForPage(this.currentPage);
+  getPaginatedUsers(): UserModel[] {
+    const startIndex = (this.currentPage - 1) * this.usersPerPage;
+    const endIndex = startIndex + this.usersPerPage;
+    return this.filteredUsers.slice(startIndex, endIndex);
   }
 
   removeUser(username: string): void {
-    this.AuthService.removeUser(username);
+    this.authService.removeUser(username);
+    this.loadUsers(); // Reload users after removal
   }
 
-  editUser(username: any):void {
-    this.AuthService.editUser(username);
+  editUser(username: any): void {
+    this.authService.editUser(username);
   }
 
+  // Pagination logic
+  totalPages(): number {
+    return Math.ceil(this.filteredUsers.length / this.usersPerPage);
+  }
+
+  setPage(pageNumber: number): void {
+    if (pageNumber >= 1 && pageNumber <= this.totalPages()) {
+      this.currentPage = pageNumber;
+    }
+  }
+
+  generateNumberArray(size: number): number[] {
+    return Array.from({ length: size }, (_, index) => index + 1);
+  }
 }

@@ -7,8 +7,9 @@ import { UserComponent } from './user.component';
 import { RouterModule, Routes } from '@angular/router';
 import { EditUserComponent } from './edit/edit.component';
 import { ProfileUserComponent } from './profile/profile.component';
-import { UserFilterPipe  } from './pipes/user-filter.pipe';
 import { FormsModule } from '@angular/forms';
+import { UserFilterPipe } from './pipes/user-filter.pipe';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 const routes: Routes = [
     {
@@ -35,7 +36,11 @@ const routes: Routes = [
       CommonModule,
       ReactiveFormsModule,
       RouterModule.forChild(routes),
-      FormsModule
-    ]
+      FormsModule,
+      NgxPaginationModule,
+    ],
+    providers: [
+      UserFilterPipe,
+    ],
   })
   export class UserModule { }

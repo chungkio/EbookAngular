@@ -6,7 +6,7 @@ import { UserModel } from '../../shared/components/auth/user.model';
 })
 export class UserFilterPipe implements PipeTransform {
   transform(users: UserModel[], selectedRole: string): UserModel[] {
-    if (!users || !selectedRole || selectedRole === 'all') {
+    if (selectedRole === 'all') {
       return users;
     }
 
